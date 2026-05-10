@@ -1,0 +1,10 @@
+{
+    "delayPerChapterinMs": 500,
+    "novels": [
+        {
+            "startingURL": "https://www.royalroad.com/fiction/22518/chrysalis",
+            "title": "Chrysalis",
+            "fileName": "Chrysalis"
+        }
+    ]
+}
