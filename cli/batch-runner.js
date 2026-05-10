@@ -49,11 +49,29 @@ async function convertNovel(novelConfig, delayMs, outputDir) {
     userPrefs.addInformationPage.value = false;   // no info page needed in batch mode
     userPrefs.addObserver(parser);
 
+    // Patch getRateLimit to add ±200ms jitter on every chapter delay
+    const origGetRateLimit = parser.getRateLimit.bind(parser);
+    parser.getRateLimit = function () {
+        const base = origGetRateLimit();
+        const jitter = Math.floor(Math.random() * 401) - 200;
+        return Math.max(0, base + jitter);
+    };
+
     // 4. Load metadata from the starting page
     await parser.loadEpubMetaInfo(dom);
     const metaInfo = parser.getEpubMetaInfo(dom, false);
 
-    // Apply overrides from config
+    // Derive title/fileName from h1.article-title if requested
+    if (novelConfig.useDefaultChapterTitle) {
+        const h1 = dom.querySelector("h1.article-title");
+        if (h1) {
+            const derived = h1.textContent.trim().split(" ")[0];
+            metaInfo.title = derived;
+            metaInfo.fileName = derived;
+        }
+    }
+
+    // Explicit config overrides take precedence over auto-derived values
     if (novelConfig.title) metaInfo.title = novelConfig.title;
     if (novelConfig.fileName) metaInfo.fileName = novelConfig.fileName;
 
@@ -87,7 +105,7 @@ async function convertNovel(novelConfig, delayMs, outputDir) {
     parser.state.setPagesToFetch(chapters);
 
     // 6. Fetch all chapter content (uses parser.rateLimitDelay() for pacing)
-    console.log(`  Fetching chapters (delay: ${parser.getRateLimit()}ms each)...`);
+    console.log(`  Fetching chapters (delay: ${delayMs} ±200ms each)...`);
     await parser.fetchContent();
 
     // 7. Pack EPUB
