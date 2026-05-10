@@ -15,15 +15,15 @@ class Shuku52Parser extends Parser {
     }
 
     findContent(dom) {
-        return dom.querySelector("div.article-content");
+        return dom.querySelector("#nr1");
     }
 
     findChapterTitle(dom) {
-        return dom.querySelector("div.article-title");
+        return dom.querySelector("#nr_title");
     }
 
     extractTitleImpl(dom) {
-        return dom.querySelector("h1")?.textContent ?? super.extractTitleImpl(dom);
+        return dom.querySelector("#nr_title, h1")?.textContent ?? super.extractTitleImpl(dom);
     }
 
     extractLanguage() {
@@ -31,7 +31,7 @@ class Shuku52Parser extends Parser {
     }
 
     removeUnwantedElementsFromContentElement(element) {
-        util.removeChildElementsMatchingSelector(element, "a");
+        util.removeChildElementsMatchingSelector(element, "#lineCorrect, .pagination2, .go_top, script");
         super.removeUnwantedElementsFromContentElement(element);
     }
 }
