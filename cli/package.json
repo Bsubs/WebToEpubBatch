@@ -1,0 +1,20 @@
+{
+  "name": "webtoepub-batch",
+  "version": "1.0.0",
+  "description": "CLI batch converter for WebToEpub",
+  "main": "index.js",
+  "type": "commonjs",
+  "bin": {
+    "webtoepub-batch": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "jsdom": "^24.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
